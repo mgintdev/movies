@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/movieList">
+
+    <fragment
+        android:id="@+id/movieList"
+        android:name="au.com.maniacalk.movies.MovieListFragment"
+        android:label="@string/movie_list_search_title"
+        tools:layout="@layout/movie_list_fragment">
+
+        <action
+            android:id="@+id/action_toMovieDetail"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:destination="@id/movieDetail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/movieDetail"
+        android:name="au.com.maniacalk.movies.MovieDetailFragment"
+        android:label="@string/movie_detail_title"
+        tools:layout="@layout/movie_detail_fragment">
+
+        <argument
+            android:name="id"
+            app:argType="string"/>
+
+    </fragment>
+</navigation>

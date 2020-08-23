@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Movies</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="movie_list_search_title">Searching by: $s</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="poster_image">Poster Image</string>
+    <string name="movie_detail_title">Movie Detail</string>
+</resources>

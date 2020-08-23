@@ -1,0 +1,8 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="spacing1">8sp</dimen>
+    <dimen name="spacing2">16sp</dimen>
+    <dimen name="movie_title_font_size">16sp</dimen>
+    <dimen name="spacing3">24dp</dimen>
+    <dimen name="spacing4">32dp</dimen>
+</resources>
