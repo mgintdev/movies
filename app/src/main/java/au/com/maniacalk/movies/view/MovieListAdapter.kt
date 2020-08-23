@@ -37,6 +37,7 @@ class MovieListAdapter(private val movies: MutableList<SearchResults.Movie>, val
                 setOnClickListener {
                     onItemClickListener(movie)
                 }
+                tvYear.text = movie.year
             }
         }
     }

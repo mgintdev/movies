@@ -65,6 +65,8 @@ class MovieListFragment : Fragment(), TextWatcher, RecyclerView.OnItemTouchListe
         recyclerView.adapter = adapter
         recyclerView.addOnItemTouchListener(this)
 
+        tvSearchFilter.setText("the matrix")
+
         tvSearchFilter.addTextChangedListener(this)
     }
 
@@ -92,6 +94,8 @@ class MovieListFragment : Fragment(), TextWatcher, RecyclerView.OnItemTouchListe
         if (currentFilter != filter) {
             currentPosition = 0
         }
+
+        tvSearchFilter.setError(null)
         MovieApplication.getInstance()
             .getMovieViewModel()
             .searchMovies(filter ?: "the matrix")
@@ -133,12 +137,13 @@ class MovieListFragment : Fragment(), TextWatcher, RecyclerView.OnItemTouchListe
         Timber.d("Results")
         adapter.updateData(data?.movies.orEmpty())
         adapter.notifyDataSetChanged()
-
+hideKeyboard()
         recyclerView.scrollToPosition(currentPosition)
     }
 
     private fun showError(message: String? = null) {
         progress.hide()
+        tvSearchFilter.setError("Invalid Query")
     }
 
     var handler: Handler = Handler()

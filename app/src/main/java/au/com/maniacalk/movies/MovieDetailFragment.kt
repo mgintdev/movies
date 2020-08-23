@@ -80,9 +80,9 @@ class MovieDetailFragment : Fragment() {
             metaDataContainer.removeAllViews()
 
             metaDataContainer.addView(
-                (layoutInflater.inflate(R.layout.movie_detail_line, metaDataContainer, false) as View).apply {
-                    this.tvLabel.text = "Type"
-                    this.tvValue.text = movie.type
+                layoutInflater.inflate(R.layout.movie_detail_line, metaDataContainer, false).apply {
+                    tvLabel.text = "Year"
+                    tvValue.text = movie.year
                 }
             )
 

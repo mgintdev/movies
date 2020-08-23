@@ -42,12 +42,13 @@
                 tools:text="Matrix" />
 
             <TextView
-                android:id="@+id/tvType"
+                android:id="@+id/tvYear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:textStyle="bold"
-                tools:text="Movie" />
+                android:textSize="@dimen/movie_title_font_size"
+                tools:text="2000" />
 
         </LinearLayout>
 

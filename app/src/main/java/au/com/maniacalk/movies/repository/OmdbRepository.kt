@@ -32,7 +32,7 @@ class OmdbRepository(retrofit: Retrofit) {
     }
 
     suspend fun searchMovies(filter: String? = null): SearchResults =
-        service.searchMovies(query = filter ?: "the mat", apiKey = BuildConfig.omdbApiKey)
+        service.searchMovies(query = filter ?: "", apiKey = BuildConfig.omdbApiKey)
 
     suspend fun getDetail(id: String): MovieDetail =
         service.getDetail(id = id, apiKey = BuildConfig.omdbApiKey)
