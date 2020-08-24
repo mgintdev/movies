@@ -1,32 +1,131 @@
 package au.com.maniacalk.movies.domain
 
-import io.kotest.core.spec.style.FunSpec
-import io.kotest.core.test.TestCase
-import io.kotest.core.test.TestResult
-import io.mockk.unmockkAll
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Observer
+import assertk.assertThat
+import assertk.assertions.isEqualTo
+import au.com.maniacalk.movies.repository.OmdbRepository
+import au.com.maniacalk.movies.repository.model.MovieDetail
+import au.com.maniacalk.movies.repository.model.SearchResults
+import au.com.maniacalk.movies.support.CoroutineTestRule
+import au.com.maniacalk.movies.view.DetailViewState
+import au.com.maniacalk.movies.view.ListViewState
+import au.com.maniacalk.movies.view.Status
+import io.mockk.*
+import io.mockk.impl.annotations.MockK
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TestRule
+import org.mockito.ArgumentCaptor
+import org.mockito.Mockito
+import org.mockito.Mockito.times
 
-class MovieListViewModelTest : FunSpec(){
 
+@ExperimentalCoroutinesApi
+open class MovieListViewModelTest {
+
+    @get:Rule
+    open var rule: TestRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val testCoroutineRule = CoroutineTestRule()
+
+    private val observerList = mockk<Observer<ListViewState>>()
+
+    private val observerDetail = mockk<Observer<DetailViewState>>()
+
+    @MockK
+    private lateinit var repo: OmdbRepository
     lateinit var vm: MovieContentViewModel
 
-    override fun beforeTest(testCase: TestCase) {
-        super.beforeTest(testCase)
-
-        vm = MovieContentViewModel()
+    @Before
+    fun before() {
+        MockKAnnotations.init(this)
+        vm = MovieContentViewModel(repo)
     }
 
-    override fun afterTest(testCase: TestCase, result: TestResult) {
-        super.afterTest(testCase, result)
-
+    @After
+    fun after() {
         unmockkAll()
     }
 
-    init {
+    @Test
+    fun `searchMovies Success`() {
+        testCoroutineRule.runBlockingTest {
+            coEvery { repo.searchMovies(any()) } returns SearchResults(
+                response = "True",
+                movies = listOf(
+                    SearchResults.Movie(
+                        imdbID = "ABC123",
+                        title = "The Matrix",
+                        type = "movie",
+                        year = "2000"
+                    )
+                )
+            )
+            vm.searchMovies("The matrix").observeForever(observerList)
+            val captor = mutableListOf<ListViewState>()
 
-        test("DefaultList") {
-            val result = vm.getDefaultMovies()
+            coVerify(exactly = 2) { observerList.onChanged(capture(captor)) }
+            assertThat(captor.size).isEqualTo(2)
+//            assertThat(captor.captured.status).isEqualTo(Status.SUCCESS)
         }
-
     }
 
+    @Test
+    fun `searchMovies Error`() {
+        testCoroutineRule.runBlockingTest {
+            coEvery { repo.searchMovies(any()) } returns SearchResults(
+                response = "False",
+                error = "Not found"
+            )
+
+            vm.searchMovies().observeForever(observerList)
+            vm.searchMovies("aaasa")
+            val captor = slot<ListViewState>()
+
+            coVerify(exactly = 1) { observerList.onChanged(capture(captor)) }
+            assertThat(captor.captured.status).isEqualTo(Status.LOADING)
+            assertThat(captor.captured.status).isEqualTo(Status.SUCCESS)
+        }
+    }
+
+    @Test
+    fun `getDetail Success`() {
+        testCoroutineRule.runBlockingTest {
+            coEvery { repo.getDetail(any()) } returns MovieDetail(
+                response = "True",
+                title = "The Matrix",
+                type = "movie",
+                year = "2000"
+            )
+            vm.getDetail("The Matrix").observeForever(observerDetail)
+            val captor = slot<DetailViewState>()
+
+            coVerify(exactly = 1) { observerDetail.onChanged(capture(captor)) }
+            assertThat(captor.captured.status).isEqualTo(Status.LOADING)
+            assertThat(captor.captured.status).isEqualTo(Status.SUCCESS)
+        }
+    }
+
+    @Test
+    fun `getDetail Error`() {
+        testCoroutineRule.runBlockingTest {
+            coEvery { repo.getDetail(any()) } returns MovieDetail(
+                response = "False",
+                error = "Not found"
+            )
+            vm.getDetail("ABC123").observeForever(observerDetail)
+            val captor = slot<DetailViewState>()
+
+            coVerify(exactly = 1) { observerDetail.onChanged(capture(captor)) }
+            assertThat(captor.captured.status).isEqualTo(Status.LOADING)
+            assertThat(captor.captured.status).isEqualTo(Status.SUCCESS)
+        }
+    }
 }
