@@ -31,5 +31,6 @@ Search movies from omdb, loads list and detail
 * Dependency Injection using Hilt/Koin
 * Switch over to Flutter to allow iOS app
 * Clean up styles, and extract strings into constants
+* Fix up Unit tests to work with livedata, coroutines, and viewmodel
 
 
