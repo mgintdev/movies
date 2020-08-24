@@ -1,5 +1,5 @@
 # OMDB Movie Search
-Search movies from omdb, loads list and detail
+Search movies from omdb, loads list and detail. This project is built in Android and uses Kotlin, Coroutines, Livedata.
 
 ![image Demo](demo.gif)
 
@@ -16,13 +16,12 @@ Search movies from omdb, loads list and detail
 * Retrofit and OkHttp Client, gson
 * Coroutines
 
-
 ## Data ##
 
 * Repository pattern used to separate data retrieval.
 * Viewmodel is used to comebine data and state to pass to view.
 
-## Requirements ##
+## Requirements/Usage ##
 * Targets Android P and above
 * Requires emulator above 29
 
