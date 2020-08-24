@@ -1,6 +1,8 @@
 # OMDB Movie Search
 Search movies from omdb, loads list and detail
 
+![image Demo](demo.gif)
+
 ## UI ##
 
 * Android ViewModel, Live Data, View State wrapped content delivered to UI
@@ -20,8 +22,14 @@ Search movies from omdb, loads list and detail
 * Repository pattern used to separate data retrieval.
 * Viewmodel is used to comebine data and state to pass to view.
 
+## Requirements ##
+* Targets Android P and above
+* Requires emulator above 29
+
 ## TODO ##
 
 * Dependency Injection using Hilt/Koin
 * Switch over to Flutter to allow iOS app
 * Clean up styles, and extract strings into constants
+
+
