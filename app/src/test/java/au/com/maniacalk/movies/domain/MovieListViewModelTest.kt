@@ -24,6 +24,7 @@ import org.junit.rules.TestRule
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito
 import org.mockito.Mockito.times
+import java.lang.RuntimeException
 
 
 @ExperimentalCoroutinesApi
@@ -73,25 +74,23 @@ open class MovieListViewModelTest {
 
             coVerify(exactly = 2) { observerList.onChanged(capture(captor)) }
             assertThat(captor.size).isEqualTo(2)
-//            assertThat(captor.captured.status).isEqualTo(Status.SUCCESS)
+            assertThat(captor[0].status).isEqualTo(Status.LOADING)
+            assertThat(captor[1].status).isEqualTo(Status.SUCCESS)
         }
     }
 
     @Test
     fun `searchMovies Error`() {
         testCoroutineRule.runBlockingTest {
-            coEvery { repo.searchMovies(any()) } returns SearchResults(
-                response = "False",
-                error = "Not found"
-            )
+            coEvery { repo.searchMovies(any()) } throws RuntimeException("Some Error")
 
             vm.searchMovies().observeForever(observerList)
             vm.searchMovies("aaasa")
-            val captor = slot<ListViewState>()
+            val captor = mutableListOf<ListViewState>()
 
-            coVerify(exactly = 1) { observerList.onChanged(capture(captor)) }
-            assertThat(captor.captured.status).isEqualTo(Status.LOADING)
-            assertThat(captor.captured.status).isEqualTo(Status.SUCCESS)
+            coVerify(exactly = 2) { observerList.onChanged(capture(captor)) }
+            assertThat(captor[0].status).isEqualTo(Status.LOADING)
+            assertThat(captor[1].status).isEqualTo(Status.ERROR)
         }
     }
 
@@ -105,27 +104,25 @@ open class MovieListViewModelTest {
                 year = "2000"
             )
             vm.getDetail("The Matrix").observeForever(observerDetail)
-            val captor = slot<DetailViewState>()
+            val captor = mutableListOf<DetailViewState>()
 
-            coVerify(exactly = 1) { observerDetail.onChanged(capture(captor)) }
-            assertThat(captor.captured.status).isEqualTo(Status.LOADING)
-            assertThat(captor.captured.status).isEqualTo(Status.SUCCESS)
+            coVerify(exactly = 2) { observerDetail.onChanged(capture(captor)) }
+            assertThat(captor[0].status).isEqualTo(Status.LOADING)
+            assertThat(captor[1].status).isEqualTo(Status.SUCCESS)
         }
     }
 
     @Test
     fun `getDetail Error`() {
         testCoroutineRule.runBlockingTest {
-            coEvery { repo.getDetail(any()) } returns MovieDetail(
-                response = "False",
-                error = "Not found"
-            )
-            vm.getDetail("ABC123").observeForever(observerDetail)
-            val captor = slot<DetailViewState>()
+            coEvery { repo.getDetail(any()) } throws RuntimeException("Some Error")
 
-            coVerify(exactly = 1) { observerDetail.onChanged(capture(captor)) }
-            assertThat(captor.captured.status).isEqualTo(Status.LOADING)
-            assertThat(captor.captured.status).isEqualTo(Status.SUCCESS)
+            vm.getDetail("ABC123").observeForever(observerDetail)
+            val captor = mutableListOf<DetailViewState>()
+
+            coVerify(exactly = 2) { observerDetail.onChanged(capture(captor)) }
+            assertThat(captor[0].status).isEqualTo(Status.LOADING)
+            assertThat(captor[1].status).isEqualTo(Status.ERROR)
         }
     }
 }
